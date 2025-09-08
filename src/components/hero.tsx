@@ -1,4 +1,5 @@
 import MyIcon from "./MyIcon";
+import { Link } from "react-router-dom";
 
 export default function Hero() {
   return (
@@ -19,18 +20,18 @@ export default function Hero() {
         </div>
 
         <div className="flex flex-col sm:flex-row justify-between mt-10 gap-4 sm:gap-0 text-center sm:text-left">
-          <a
-            href="#"
+          <Link
+            to="/treino"
             className="px-4 sm:px-6 md:px-10 py-2 sm:py-3 text-lg sm:text-xl md:text-[32px] text-[#f5f5f5] bg-[#111111] border-2 border-transparent rounded-[5px] hover:bg-transparent hover:text-[#111111] hover:border-[#111111] transition-colors duration-300 ease-in-out"
           >
             Monte seu treino
-          </a>
-          <a
-            href="#"
+          </Link>
+          <Link
+            to="/dieta"
             className="px-4 sm:px-6 md:px-10 py-2 sm:py-3 text-lg sm:text-xl md:text-[32px] text-[#f5f5f5] bg-[#111111] border-2 border-transparent rounded-[5px] hover:bg-transparent hover:text-[#111111] hover:border-[#111111] transition-colors duration-300 ease-in-out"
           >
-            Monte seu treino
-          </a>
+            Monte sua dieta
+          </Link>
         </div>
       </div>
     </section>
