@@ -1,70 +1,36 @@
-# React + TypeScript + Vite
-
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
-
-Currently, two official plugins are available:
-
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
-
-## Expanding the ESLint configuration
-
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
-
-```js
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-
-      // Remove tseslint.configs.recommended and replace with this
-      ...tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      ...tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      ...tseslint.configs.stylisticTypeChecked,
-
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
-
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
-
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
-
-export default tseslint.config([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
 # FitPlan
+
+Um sistema frontend para criação e edição de planilhas de treino e dieta, com exportação para PDF. Projeto em fase inicial, focado em simplicidade, usabilidade e design clean.
+
+## Funcionalidades
+
+  - Criar planilhas de treino personalizadas
+  - Criar planilhas de dieta com alimentos e quantidades
+  - Editar treinos e dietas de forma rápida e visual
+  - Exportar planilhas completas para PDF
+  - Interface limpa e moderna, totalmente responsiva
+
+## Problema que resolve
+
+Antes, organizar treinos e dietas exigia usar Excel ou outros softwares, formatando manualmente células, fórmulas e layouts.
+Este projeto simplifica tudo, tornando a criação de planilhas mais prática, rápida e organizada, diretamente no navegador.
+
+## Tecnologias
+
+  -  Frontend: React.js, TypeScript
+  -  Estilo: TailwindCSS (design clean e moderno)
+  -  Exportação: PDF generation via bibliotecas JS
+
+## Status do projeto
+
+  -  Projeto iniciado em [08/09/2025]
+  -  Funcionalidades básicas em desenvolvimento
+  -  Planejo compartilhar versão completa em breve
+
+## Próximos passos
+
+  -  Implementar cards dinâmicos de treino e dieta
+  -  Melhorar exportação de PDF com layout profissional
+  -  Adicionar interações e animações suaves no frontend
+  -  Testes e ajustes finais antes da primeira versão completa
+
