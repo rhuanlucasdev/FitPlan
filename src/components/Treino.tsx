@@ -87,7 +87,7 @@ export default function TreinoTable() {
         },
       });
 
-      startY = (doc.lastAutoTable?.finalY ?? startY) + 20;
+      startY = ((doc as any).lastAutoTable?.finalY ?? startY) + 20;
     });
 
     doc.save("meuTreino.pdf");
