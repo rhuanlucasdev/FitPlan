@@ -10,7 +10,7 @@ import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import EnhancedFoodSelector from "./EnhancedFoodSelector";
 import { EnhancedFoodService } from "../services/EnhancedFoodService";
-import type { FoodMacros, Food } from "../types/Food";
+import type { FoodMacros } from "../types/Food";
 
 interface FoodRow {
   qtd: string;

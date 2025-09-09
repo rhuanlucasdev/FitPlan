@@ -8,7 +8,6 @@ import type { Food, FoodMacros } from "../types/Food";
 interface FoodSelectorProps {
   value: string;
   onChange: (value: string) => void;
-  onMacrosChange?: (macros: FoodMacros | null) => void;
   placeholder?: string;
   className?: string;
 }
@@ -16,7 +15,6 @@ interface FoodSelectorProps {
 export default function FoodSelector({
   value,
   onChange,
-  onMacrosChange,
   placeholder = "Ex: Arroz",
   className = "",
 }: FoodSelectorProps) {

@@ -114,7 +114,7 @@ export class SqlFoodService {
   static async getAllCategories() {
     try {
       const categories = await apiClient.getFoodCategories();
-      return categories.map((cat: any) => ({
+      return (categories as any[]).map((cat: any) => ({
         id: cat.id,
         name: cat.name,
         description: cat.description,
@@ -129,7 +129,7 @@ export class SqlFoodService {
   static async getAllUnits() {
     try {
       const units = await apiClient.getFoodUnits();
-      return units.map((unit: any) => ({
+      return (units as any[]).map((unit: any) => ({
         id: unit.id,
         name: unit.name,
         abbreviation: unit.abbreviation,
@@ -164,33 +164,17 @@ export class SqlFoodService {
       proteinPerUnit: apiFood.proteinPerUnit,
       carbsPerUnit: apiFood.carbsPerUnit,
       fatPerUnit: apiFood.fatPerUnit,
-      fiberPerUnit: apiFood.fiberPerUnit,
-      sugarPerUnit: apiFood.sugarPerUnit,
-      sodiumPerUnit: apiFood.sodiumPerUnit,
+      fiberPerUnit: apiFood.fiberPerUnit || 0,
+      sugarPerUnit: apiFood.sugarPerUnit || 0,
+      sodiumPerUnit: apiFood.sodiumPerUnit || 0,
       description: apiFood.description,
       isCustom: apiFood.isCustom,
       createdAt: apiFood.createdAt,
-      // Add API-specific properties
-      ...(apiFood.isFromApi && {
-        isFromApi: apiFood.isFromApi,
-        brand: apiFood.brand,
-        imageUrl: apiFood.imageUrl,
-        originalQuery: apiFood.originalQuery,
-        translatedQuery: apiFood.translatedQuery,
-        apiProductName: apiFood.apiProductName,
-      }),
-    } as Food & {
-      isFromApi?: boolean;
-      brand?: string;
-      imageUrl?: string;
-      originalQuery?: string;
-      translatedQuery?: string;
-      apiProductName?: string;
-    };
+    } as Food;
   }
 
   // Map multiple API foods to local Food type
-  private static mapApiFoodsToLocal(apiFoods: any[]): Food[] {
+  private static mapApiFoodsToLocal(apiFoods: unknown[]): Food[] {
     return apiFoods.map((food) => this.mapApiFoodToLocal(food));
   }
 }

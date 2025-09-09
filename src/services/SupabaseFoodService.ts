@@ -106,7 +106,14 @@ export class SupabaseFoodService {
 
   // Adicionar alimento
   static async addFood(
-    food: Omit<Food, "id" | "createdAt" | "updatedAt">
+    food: Omit<Food, "id" | "createdAt" | "updatedAt"> & {
+      isFromApi?: boolean;
+      brand?: string;
+      imageUrl?: string;
+      originalQuery?: string;
+      translatedQuery?: string;
+      apiProductName?: string;
+    }
   ): Promise<Food | null> {
     try {
       // Buscar IDs das categorias e unidades
@@ -188,15 +195,9 @@ export class SupabaseFoodService {
         sodiumPerUnit: data.sodium_per_unit || 0,
         description: data.description || "",
         isCustom: data.is_custom || false,
-        isFromApi: data.is_from_api || false,
-        brand: data.brand || "",
-        imageUrl: data.image_url || "",
-        originalQuery: data.original_query || "",
-        translatedQuery: data.translated_query || "",
-        apiProductName: data.api_product_name || "",
         createdAt: data.created_at || new Date().toISOString(),
         updatedAt: data.updated_at || new Date().toISOString(),
-      };
+      } as Food;
     } catch (error) {
       console.error("Error adding food:", error);
       return null;
@@ -256,7 +257,14 @@ export class SupabaseFoodService {
   }
 
   // Salvar alimento selecionado da API
-  static async saveSelectedFood(food: Food): Promise<Food | null> {
+  static async saveSelectedFood(food: Food & {
+    isFromApi?: boolean;
+    brand?: string;
+    imageUrl?: string;
+    originalQuery?: string;
+    translatedQuery?: string;
+    apiProductName?: string;
+  }): Promise<Food | null> {
     try {
       // Verificar se o alimento já existe
       const { data: existingFood } = await supabase
@@ -286,9 +294,9 @@ export class SupabaseFoodService {
       protein: food.proteinPerUnit * quantity,
       carbs: food.carbsPerUnit * quantity,
       fat: food.fatPerUnit * quantity,
-      fiber: food.fiberPerUnit * quantity,
-      sugar: food.sugarPerUnit * quantity,
-      sodium: food.sodiumPerUnit * quantity,
+      fiber: (food.fiberPerUnit || 0) * quantity,
+      sugar: (food.sugarPerUnit || 0) * quantity,
+      sodium: (food.sodiumPerUnit || 0) * quantity,
     };
   }
 }
