@@ -8,10 +8,14 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
+import EnhancedFoodSelector from "./EnhancedFoodSelector";
+import { EnhancedFoodService } from "../services/EnhancedFoodService";
+import type { FoodMacros, Food } from "../types/Food";
 
 interface FoodRow {
   qtd: string;
   alimento: string;
+  foodId?: string;
   kcal: string;
   prot: string;
   carb: string;
@@ -27,9 +31,87 @@ export default function DietTable() {
   const [meals, setMeals] = useState<MealTable[]>([
     {
       nome: "Café da manhã",
-      rows: [{ qtd: "", alimento: "", kcal: "", prot: "", carb: "", gord: "" }],
+      rows: [
+        {
+          qtd: "",
+          alimento: "",
+          foodId: "",
+          kcal: "",
+          prot: "",
+          carb: "",
+          gord: "",
+        },
+      ],
     },
   ]);
+
+  // Calculate macros for a food item
+  const calculateMacros = async (
+    foodId: string,
+    quantity: string
+  ): Promise<FoodMacros | null> => {
+    if (!foodId || !quantity) return null;
+    const qty = parseFloat(quantity);
+    if (isNaN(qty) || qty <= 0) return null;
+
+    const foods = await EnhancedFoodService.getAllFoods();
+    const food = foods.find((f) => f.id === foodId);
+    if (!food) return null;
+
+    return EnhancedFoodService.calculateMacros(food, qty);
+  };
+
+  // Handle food selection and auto-calculate macros
+  const handleFoodSelect = async (
+    mealIndex: number,
+    rowIndex: number,
+    foodName: string,
+    foodId?: string
+  ) => {
+    const newMeals = [...meals];
+    newMeals[mealIndex].rows[rowIndex].alimento = foodName;
+    newMeals[mealIndex].rows[rowIndex].foodId = foodId || "";
+
+    // Auto-calculate macros if we have both food ID and quantity
+    if (foodId && newMeals[mealIndex].rows[rowIndex].qtd) {
+      const macros = await calculateMacros(
+        foodId,
+        newMeals[mealIndex].rows[rowIndex].qtd
+      );
+      if (macros) {
+        newMeals[mealIndex].rows[rowIndex].kcal = macros.calories.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].prot = macros.protein.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].carb = macros.carbs.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].gord = macros.fat.toFixed(2);
+      }
+    }
+
+    setMeals(newMeals);
+  };
+
+  // Handle quantity change and auto-calculate macros
+  const handleQuantityChange = async (
+    mealIndex: number,
+    rowIndex: number,
+    quantity: string
+  ) => {
+    const newMeals = [...meals];
+    newMeals[mealIndex].rows[rowIndex].qtd = quantity;
+
+    // Auto-calculate macros if we have both food ID and quantity
+    const foodId = newMeals[mealIndex].rows[rowIndex].foodId;
+    if (foodId && quantity) {
+      const macros = await calculateMacros(foodId, quantity);
+      if (macros) {
+        newMeals[mealIndex].rows[rowIndex].kcal = macros.calories.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].prot = macros.protein.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].carb = macros.carbs.toFixed(2);
+        newMeals[mealIndex].rows[rowIndex].gord = macros.fat.toFixed(2);
+      }
+    }
+
+    setMeals(newMeals);
+  };
 
   const addMeal = () => {
     setMeals([
@@ -37,7 +119,15 @@ export default function DietTable() {
       {
         nome: "Nova Refeição",
         rows: [
-          { qtd: "", alimento: "", kcal: "", prot: "", carb: "", gord: "" },
+          {
+            qtd: "",
+            alimento: "",
+            foodId: "",
+            kcal: "",
+            prot: "",
+            carb: "",
+            gord: "",
+          },
         ],
       },
     ]);
@@ -53,6 +143,7 @@ export default function DietTable() {
     newMeals[mealIndex].rows.push({
       qtd: "",
       alimento: "",
+      foodId: "",
       kcal: "",
       prot: "",
       carb: "",
@@ -87,7 +178,7 @@ export default function DietTable() {
   };
 
   const calculateTotals = (meal: MealTable) => {
-    return meal.rows.reduce(
+    const totals = meal.rows.reduce(
       (totals, row) => {
         totals.kcal += Number(row.kcal) || 0;
         totals.prot += Number(row.prot) || 0;
@@ -97,6 +188,13 @@ export default function DietTable() {
       },
       { kcal: 0, prot: 0, carb: 0, gord: 0 }
     );
+
+    return {
+      kcal: Number(totals.kcal.toFixed(2)),
+      prot: Number(totals.prot.toFixed(2)),
+      carb: Number(totals.carb.toFixed(2)),
+      gord: Number(totals.gord.toFixed(2)),
+    };
   };
 
   const totalGlobal = meals.reduce(
@@ -112,6 +210,13 @@ export default function DietTable() {
     { kcal: 0, prot: 0, carb: 0, gord: 0 }
   );
 
+  const formattedTotalGlobal = {
+    kcal: Number(totalGlobal.kcal.toFixed(2)),
+    prot: Number(totalGlobal.prot.toFixed(2)),
+    carb: Number(totalGlobal.carb.toFixed(2)),
+    gord: Number(totalGlobal.gord.toFixed(2)),
+  };
+
   const exportPDF = () => {
     const doc = new jsPDF();
     let startY = 20;
@@ -121,7 +226,7 @@ export default function DietTable() {
     doc.setFontSize(12);
     startY += 8;
     doc.text(
-      `Kcal: ${totalGlobal.kcal} | Prot: ${totalGlobal.prot} | Carb: ${totalGlobal.carb} | Gord: ${totalGlobal.gord}`,
+      `Kcal: ${formattedTotalGlobal.kcal} | Prot: ${formattedTotalGlobal.prot} | Carb: ${formattedTotalGlobal.carb} | Gord: ${formattedTotalGlobal.gord}`,
       14,
       startY
     );
@@ -224,18 +329,50 @@ export default function DietTable() {
                         ] as (keyof FoodRow)[]
                       ).map((key) => (
                         <td key={key} className="border-[#CCCCCC] border p-2">
-                          <input
-                            type={
-                              key === "qtd" || key === "alimento"
-                                ? "text"
-                                : "number"
-                            }
-                            value={row[key]}
-                            onChange={(e) =>
-                              updateCell(mIndex, rIndex, key, e.target.value)
-                            }
-                            className="w-full p-1 focus:outline-none"
-                          />
+                          {key === "alimento" ? (
+                            <EnhancedFoodSelector
+                              value={row.alimento}
+                              onChange={async (value) => {
+                                // Find the food by name to get the ID
+                                const foods =
+                                  await EnhancedFoodService.getAllFoods();
+                                const food = foods.find(
+                                  (f) => f.name === value
+                                );
+                                await handleFoodSelect(
+                                  mIndex,
+                                  rIndex,
+                                  value,
+                                  food?.id
+                                );
+                              }}
+                              placeholder="Ex: Arroz"
+                              className="w-full"
+                            />
+                          ) : key === "qtd" ? (
+                            <input
+                              type="text"
+                              value={row.qtd}
+                              onChange={async (e) =>
+                                await handleQuantityChange(
+                                  mIndex,
+                                  rIndex,
+                                  e.target.value
+                                )
+                              }
+                              placeholder="Ex: 100g"
+                              className="w-full p-1 focus:outline-none"
+                            />
+                          ) : (
+                            <input
+                              type="number"
+                              value={row[key]}
+                              onChange={(e) =>
+                                updateCell(mIndex, rIndex, key, e.target.value)
+                              }
+                              className="w-full p-1 focus:outline-none"
+                            />
+                          )}
                         </td>
                       ))}
                       <td className="border-[#CCCCCC] border p-2 flex justify-center">
@@ -295,31 +432,57 @@ export default function DietTable() {
                         <span className="font-semibold text-gray-700 capitalize">
                           {key}:
                         </span>
-                        <input
-                          type={
-                            key === "qtd" || key === "alimento"
-                              ? "text"
-                              : "number"
-                          }
-                          placeholder={
-                            key === "qtd"
-                              ? "Ex: 100g"
-                              : key === "alimento"
-                              ? "Arroz"
-                              : key === "kcal"
-                              ? "200"
-                              : key === "prot"
-                              ? "10"
-                              : key === "carb"
-                              ? "40"
-                              : "5"
-                          }
-                          value={row[key]}
-                          onChange={(e) =>
-                            updateCell(mIndex, rIndex, key, e.target.value)
-                          }
-                          className="w-[60%] p-1 border border-gray-300 rounded focus:outline-none text-sm"
-                        />
+                        {key === "alimento" ? (
+                          <EnhancedFoodSelector
+                            value={row.alimento}
+                            onChange={async (value) => {
+                              // Find the food by name to get the ID
+                              const foods =
+                                await EnhancedFoodService.getAllFoods();
+                              const food = foods.find((f) => f.name === value);
+                              await handleFoodSelect(
+                                mIndex,
+                                rIndex,
+                                value,
+                                food?.id
+                              );
+                            }}
+                            placeholder="Ex: Arroz"
+                            className="w-[60%]"
+                          />
+                        ) : key === "qtd" ? (
+                          <input
+                            type="text"
+                            value={row.qtd}
+                            onChange={async (e) =>
+                              await handleQuantityChange(
+                                mIndex,
+                                rIndex,
+                                e.target.value
+                              )
+                            }
+                            placeholder="Ex: 100g"
+                            className="w-[60%] p-1 border border-gray-300 rounded focus:outline-none text-sm"
+                          />
+                        ) : (
+                          <input
+                            type="number"
+                            placeholder={
+                              key === "kcal"
+                                ? "200"
+                                : key === "prot"
+                                ? "10"
+                                : key === "carb"
+                                ? "40"
+                                : "5"
+                            }
+                            value={row[key]}
+                            onChange={(e) =>
+                              updateCell(mIndex, rIndex, key, e.target.value)
+                            }
+                            className="w-[60%] p-1 border border-gray-300 rounded focus:outline-none text-sm"
+                          />
+                        )}
                       </div>
                     ))}
                     <div className="flex justify-end">
@@ -359,10 +522,10 @@ export default function DietTable() {
       <div className="p-4 rounded-lg shadow-xl bg-[#ECECEC] flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h2 className="font-bold text-lg">Totais da dieta:</h2>
         <div className="flex flex-wrap gap-4 text-sm md:text-base">
-          <p>Calorias: {totalGlobal.kcal} kcal</p>
-          <p>Proteínas: {totalGlobal.prot} g</p>
-          <p>Carboidratos: {totalGlobal.carb} g</p>
-          <p>Gorduras: {totalGlobal.gord} g</p>
+          <p>Calorias: {formattedTotalGlobal.kcal} kcal</p>
+          <p>Proteínas: {formattedTotalGlobal.prot} g</p>
+          <p>Carboidratos: {formattedTotalGlobal.carb} g</p>
+          <p>Gorduras: {formattedTotalGlobal.gord} g</p>
         </div>
       </div>
 

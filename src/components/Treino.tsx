@@ -8,6 +8,7 @@ import {
 import jsPDF from "jspdf";
 import autoTable from "jspdf-autotable";
 import { Link } from "react-router-dom";
+import ExerciseSelector from "./ExerciseSelector";
 
 export default function TreinoTable() {
   const [tables, setTables] = useState([
@@ -87,7 +88,9 @@ export default function TreinoTable() {
         },
       });
 
-      startY = ((doc as any).lastAutoTable?.finalY ?? startY) + 20;
+      startY =
+        ((doc as unknown as { lastAutoTable?: { finalY: number } })
+          .lastAutoTable?.finalY ?? startY) + 20;
     });
 
     doc.save("meuTreino.pdf");
@@ -144,27 +147,38 @@ export default function TreinoTable() {
                   <tr key={rIndex}>
                     {["exercicio", "series", "reps", "obs"].map((key) => (
                       <td key={key} className="border-[#CCCCCC] border p-2">
-                        <input
-                          type={key === "series" ? "number" : "text"}
-                          placeholder={
-                            key === "exercicio"
-                              ? "Ex: Supino"
-                              : key === "series"
-                              ? "3"
-                              : key === "reps"
-                              ? "8-12"
-                              : "Observacao"
-                          }
-                          value={row[key as keyof typeof row]}
-                          onChange={(e) => {
-                            const newTables = [...tables];
-                            newTables[tIndex].rows[rIndex][
-                              key as keyof typeof row
-                            ] = e.target.value;
-                            setTables(newTables);
-                          }}
-                          className="w-full p-1 focus:outline-none text-[#111111]"
-                        />
+                        {key === "exercicio" ? (
+                          <ExerciseSelector
+                            value={row.exercicio}
+                            onChange={(value) => {
+                              const newTables = [...tables];
+                              newTables[tIndex].rows[rIndex].exercicio = value;
+                              setTables(newTables);
+                            }}
+                            placeholder="Ex: Supino"
+                            className="w-full"
+                          />
+                        ) : (
+                          <input
+                            type={key === "series" ? "number" : "text"}
+                            placeholder={
+                              key === "series"
+                                ? "3"
+                                : key === "reps"
+                                ? "8-12"
+                                : "Observacao"
+                            }
+                            value={row[key as keyof typeof row]}
+                            onChange={(e) => {
+                              const newTables = [...tables];
+                              newTables[tIndex].rows[rIndex][
+                                key as keyof typeof row
+                              ] = e.target.value;
+                              setTables(newTables);
+                            }}
+                            className="w-full p-1 focus:outline-none text-[#111111]"
+                          />
+                        )}
                       </td>
                     ))}
                     <td className="p-2 flex justify-center">
@@ -195,27 +209,38 @@ export default function TreinoTable() {
                       <span className="font-semibold text-gray-700 capitalize">
                         {key}:
                       </span>
-                      <input
-                        type={key === "series" ? "number" : "text"}
-                        placeholder={
-                          key === "exercicio"
-                            ? "Ex: Supino"
-                            : key === "series"
-                            ? "3"
-                            : key === "reps"
-                            ? "8-12"
-                            : "Observacao"
-                        }
-                        value={row[key as keyof typeof row]}
-                        onChange={(e) => {
-                          const newTables = [...tables];
-                          newTables[tIndex].rows[rIndex][
-                            key as keyof typeof row
-                          ] = e.target.value;
-                          setTables(newTables);
-                        }}
-                        className="w-[60%] p-1 border border-gray-300 rounded focus:outline-none"
-                      />
+                      {key === "exercicio" ? (
+                        <ExerciseSelector
+                          value={row.exercicio}
+                          onChange={(value) => {
+                            const newTables = [...tables];
+                            newTables[tIndex].rows[rIndex].exercicio = value;
+                            setTables(newTables);
+                          }}
+                          placeholder="Ex: Supino"
+                          className="w-[60%]"
+                        />
+                      ) : (
+                        <input
+                          type={key === "series" ? "number" : "text"}
+                          placeholder={
+                            key === "series"
+                              ? "3"
+                              : key === "reps"
+                              ? "8-12"
+                              : "Observacao"
+                          }
+                          value={row[key as keyof typeof row]}
+                          onChange={(e) => {
+                            const newTables = [...tables];
+                            newTables[tIndex].rows[rIndex][
+                              key as keyof typeof row
+                            ] = e.target.value;
+                            setTables(newTables);
+                          }}
+                          className="w-[60%] p-1 border border-gray-300 rounded focus:outline-none"
+                        />
+                      )}
                     </div>
                   ))}
                   <div className="flex justify-end">
