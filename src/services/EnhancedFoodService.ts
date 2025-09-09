@@ -212,10 +212,11 @@ export class EnhancedFoodService {
       const result = await SupabaseFoodService.addFood(foodToSave);
       if (result) {
         console.log("✅ Alimento salvo com sucesso:", result.name);
+        return result;
       } else {
         console.error("❌ Erro ao salvar alimento");
+        return null;
       }
-      return result;
     }
   }
 }

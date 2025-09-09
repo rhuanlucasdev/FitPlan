@@ -187,7 +187,6 @@ export class TranslationService {
     bolacha: "cracker",
     bolo: "cake",
     torta: "pie",
-    pudim: "pudding",
     mousse: "mousse",
     chocolate: "chocolate",
     "chocolate ao leite": "milk chocolate",
@@ -231,7 +230,6 @@ export class TranslationService {
     "batata inglesa": "potato",
     "batata baroa": "parsnip",
     cará: "yam",
-    inhame: "yam",
 
     // Temperos e Condimentos
     sal: "salt",

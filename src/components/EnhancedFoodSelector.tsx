@@ -9,7 +9,6 @@ import type { Food } from "../types/Food";
 interface EnhancedFoodSelectorProps {
   value: string;
   onChange: (value: string) => void;
-  onMacrosChange?: (macros: any) => void;
   placeholder?: string;
   className?: string;
 }
@@ -17,7 +16,6 @@ interface EnhancedFoodSelectorProps {
 export default function EnhancedFoodSelector({
   value,
   onChange,
-  onMacrosChange,
   placeholder = "Ex: Arroz",
   className = "",
 }: EnhancedFoodSelectorProps) {
@@ -141,8 +139,13 @@ export default function EnhancedFoodSelector({
     // If it's from API and not already in local database, save it
     if (food.isFromApi) {
       const savedFood = await EnhancedFoodService.saveSelectedFood(food);
-      onChange(savedFood.name);
-      setSearchQuery(savedFood.name);
+      if (savedFood) {
+        onChange(savedFood.name);
+        setSearchQuery(savedFood.name);
+      } else {
+        onChange(food.name);
+        setSearchQuery(food.name);
+      }
     } else {
       onChange(food.name);
       setSearchQuery(food.name);
@@ -170,10 +173,12 @@ export default function EnhancedFoodSelector({
         isCustom: true,
       });
 
-      const foods = await EnhancedFoodService.getAllFoods();
-      setFoods(foods);
-      onChange(newFood.name);
-      setSearchQuery(newFood.name);
+      if (newFood) {
+        const foods = await EnhancedFoodService.getAllFoods();
+        setFoods(foods);
+        onChange(newFood.name);
+        setSearchQuery(newFood.name);
+      }
       setShowAddCustom(false);
       setCustomFoodName("");
       setSelectedCategory("");
