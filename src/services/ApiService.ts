@@ -2,8 +2,8 @@ import { API_CONFIG } from "../config/api";
 
 // API Service for external data integration
 export class ApiService {
-  private static readonly OPEN_FOOD_FACTS_BASE_URL =
-    API_CONFIG.OPEN_FOOD_FACTS_BASE_URL;
+  // private static readonly OPEN_FOOD_FACTS_BASE_URL =
+  //   API_CONFIG.OPEN_FOOD_FACTS_BASE_URL;
   private static readonly EXERCISE_DB_BASE_URL =
     API_CONFIG.EXERCISE_DB_BASE_URL;
   private static readonly RAPIDAPI_KEY = API_CONFIG.RAPIDAPI_KEY;

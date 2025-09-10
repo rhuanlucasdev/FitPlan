@@ -6,7 +6,7 @@ export class SqlFoodService {
   static async getAllFoods(): Promise<Food[]> {
     try {
       const foods = await apiClient.getFoods({ limit: 1000 });
-      return this.mapApiFoodsToLocal(foods);
+      return this.mapApiFoodsToLocal(foods as any[]);
     } catch (error) {
       console.error("Error fetching foods from API:", error);
       return [];
@@ -20,7 +20,7 @@ export class SqlFoodService {
         search: query,
         limit: 50,
       });
-      return this.mapApiFoodsToLocal(foods);
+      return this.mapApiFoodsToLocal(foods as any[]);
     } catch (error) {
       console.error("Error searching foods:", error);
       return [];
@@ -49,17 +49,11 @@ export class SqlFoodService {
         proteinPerUnit: food.proteinPerUnit,
         carbsPerUnit: food.carbsPerUnit,
         fatPerUnit: food.fatPerUnit,
-        fiberPerUnit: food.fiberPerUnit,
-        sugarPerUnit: food.sugarPerUnit,
-        sodiumPerUnit: food.sodiumPerUnit,
+        fiberPerUnit: food.fiberPerUnit || 0,
+        sugarPerUnit: food.sugarPerUnit || 0,
+        sodiumPerUnit: food.sodiumPerUnit || 0,
         description: food.description,
         isCustom: food.isCustom,
-        isFromApi: food.isFromApi || false,
-        brand: (food as any).brand,
-        imageUrl: (food as any).imageUrl,
-        originalQuery: (food as any).originalQuery,
-        translatedQuery: (food as any).translatedQuery,
-        apiProductName: (food as any).apiProductName,
       });
 
       return this.mapApiFoodToLocal(apiFood);
@@ -80,17 +74,11 @@ export class SqlFoodService {
         proteinPerUnit: food.proteinPerUnit,
         carbsPerUnit: food.carbsPerUnit,
         fatPerUnit: food.fatPerUnit,
-        fiberPerUnit: food.fiberPerUnit,
-        sugarPerUnit: food.sugarPerUnit,
-        sodiumPerUnit: food.sodiumPerUnit,
+        fiberPerUnit: food.fiberPerUnit || 0,
+        sugarPerUnit: food.sugarPerUnit || 0,
+        sodiumPerUnit: food.sodiumPerUnit || 0,
         description: food.description,
         isCustom: food.isCustom,
-        isFromApi: food.isFromApi,
-        brand: (food as any).brand,
-        imageUrl: (food as any).imageUrl,
-        originalQuery: (food as any).originalQuery,
-        translatedQuery: (food as any).translatedQuery,
-        apiProductName: (food as any).apiProductName,
       });
 
       return this.mapApiFoodToLocal(apiFood);
@@ -147,9 +135,9 @@ export class SqlFoodService {
       protein: food.proteinPerUnit * quantity,
       carbs: food.carbsPerUnit * quantity,
       fat: food.fatPerUnit * quantity,
-      fiber: food.fiberPerUnit * quantity,
-      sugar: food.sugarPerUnit * quantity,
-      sodium: food.sodiumPerUnit * quantity,
+      fiber: (food.fiberPerUnit || 0) * quantity,
+      sugar: (food.sugarPerUnit || 0) * quantity,
+      sodium: (food.sodiumPerUnit || 0) * quantity,
     };
   }
 

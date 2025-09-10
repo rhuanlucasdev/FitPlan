@@ -3,7 +3,7 @@ import { createPortal } from "react-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPlus, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { foodService } from "../services/FoodService";
-import type { Food, FoodMacros } from "../types/Food";
+import type { Food } from "../types/Food";
 
 interface FoodSelectorProps {
   value: string;

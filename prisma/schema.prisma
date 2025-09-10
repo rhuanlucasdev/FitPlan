@@ -1,0 +1,108 @@
+// Schema para PostgreSQL (Supabase)
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model FoodCategory {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  foods       Food[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("food_categories")
+}
+
+model FoodUnit {
+  id          String @id @default(cuid())
+  name        String
+  abbreviation String
+  foods       Food[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("food_units")
+}
+
+model Food {
+  id              String @id @default(cuid())
+  name            String
+  categoryId      String
+  unitId          String
+  caloriesPerUnit Float  @default(0)
+  proteinPerUnit  Float  @default(0)
+  carbsPerUnit    Float  @default(0)
+  fatPerUnit      Float  @default(0)
+  fiberPerUnit    Float  @default(0)
+  sugarPerUnit    Float  @default(0)
+  sodiumPerUnit   Float  @default(0)
+  description     String?
+  isCustom        Boolean @default(false)
+  isFromApi       Boolean @default(false)
+  brand           String?
+  imageUrl        String?
+  originalQuery   String?
+  translatedQuery String?
+  apiProductName  String?
+  category        FoodCategory @relation(fields: [categoryId], references: [id])
+  unit            FoodUnit @relation(fields: [unitId], references: [id])
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("foods")
+}
+
+model ExerciseCategory {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  exercises   Exercise[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("exercise_categories")
+}
+
+model MuscleGroup {
+  id          String @id @default(cuid())
+  name        String
+  description String?
+  exercises   ExerciseMuscleGroup[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("muscle_groups")
+}
+
+model Exercise {
+  id          String @id @default(cuid())
+  name        String
+  categoryId  String
+  description String?
+  isCustom    Boolean @default(false)
+  category    ExerciseCategory @relation(fields: [categoryId], references: [id])
+  muscleGroups ExerciseMuscleGroup[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("exercises")
+}
+
+model ExerciseMuscleGroup {
+  id            String @id @default(cuid())
+  exerciseId    String
+  muscleGroupId String
+  exercise      Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  muscleGroup   MuscleGroup @relation(fields: [muscleGroupId], references: [id], onDelete: Cascade)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([exerciseId, muscleGroupId])
+  @@map("exercise_muscle_groups")
+}

@@ -1,0 +1,59 @@
+# ===========================================
+# CONFIGURAÇÕES DO BANCO DE DADOS
+# ===========================================
+
+# SQLite (desenvolvimento local)
+DATABASE_URL="file:./dev.db"
+
+# Supabase PostgreSQL (produção)
+# DATABASE_URL="postgresql://postgres:[PASSWORD]@db.[PROJECT].supabase.co:5432/postgres"
+
+# ===========================================
+# CONFIGURAÇÕES DO SUPABASE
+# ===========================================
+
+# URL do projeto Supabase
+# SUPABASE_URL="https://[PROJECT].supabase.co"
+
+# Chave anônima do Supabase
+# SUPABASE_ANON_KEY="[ANON_KEY]"
+
+# ===========================================
+# CONFIGURAÇÕES DA API
+# ===========================================
+
+# Open Food Facts API (gratuita)
+OPEN_FOOD_FACTS_BASE_URL="https://world.openfoodfacts.org"
+
+# ExerciseDB API via RapidAPI (opcional)
+# RAPIDAPI_KEY="[YOUR_RAPIDAPI_KEY]"
+
+# ===========================================
+# CONFIGURAÇÕES DO SERVIDOR
+# ===========================================
+
+# Porta do servidor (desenvolvimento)
+PORT=3001
+
+# Ambiente
+NODE_ENV="development"
+
+# ===========================================
+# INSTRUÇÕES DE CONFIGURAÇÃO
+# ===========================================
+
+# 1. Para desenvolvimento local:
+#    - Use o SQLite (DATABASE_URL já configurado)
+#    - Execute: npm run dev:full
+
+# 2. Para produção no Netlify:
+#    - Crie conta no Supabase (supabase.com)
+#    - Obtenha as credenciais do projeto
+#    - Descomente e configure as variáveis do Supabase
+#    - Execute: npm run db:push:postgres
+#    - Execute: npm run migrate:supabase
+
+# 3. Para configurar RapidAPI (opcional):
+#    - Crie conta no RapidAPI (rapidapi.com)
+#    - Obtenha a chave da API ExerciseDB
+#    - Descomente e configure RAPIDAPI_KEY
