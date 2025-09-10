@@ -8,7 +8,7 @@
 
 <h2>🚀 Demo</h2>
 
-[fitplanapp.netlify.app](fitplanapp.netlify.app)
+Demo: [fitplanapp.netlify.app](https://fitplanapp.netlify.app)
 
   
   
